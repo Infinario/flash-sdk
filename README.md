@@ -1,6 +1,6 @@
 # Infinario Flash SDK
 
-The `com.infinario_segments.api.Infinario` class provides access to the Infinario
+The `com.infinario.api.Infinario` class provides access to the Infinario
 asynchronous ActionScript tracking API. In order to track events, instantiate the
 class and call initialize with at least the company token (you can get it when you log in to Infinario), for example:
 
