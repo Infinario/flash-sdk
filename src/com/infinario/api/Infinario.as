@@ -57,9 +57,9 @@
             });
         }
 		
-		private function getCookie():String {
+		private function getCookie(fresh:Boolean = false):String {
 			var so:SharedObject  = SharedObject.getLocal(TRACKING_COOKIE_KEY);
-			if (so.size == 0 || !so.data.cookie || (typeof so.data.cookie) !== 'string' || so.data.cookie.length != 36) {
+			if (fresh || so.size == 0 || !so.data.cookie || (typeof so.data.cookie) !== 'string' || so.data.cookie.length != 36) {
 				so.data.cookie = guid();
 				so.flush();
 			}
@@ -170,7 +170,7 @@
 
 		private function getCustomerJson(properties:*):* {
 			return {
-				ids: config.customer,
+				ids: extend({}, config.customer),
 				company_id: config.token,
 				properties: properties
 			};
@@ -348,6 +348,15 @@
             });
         }
 
+		public function anonymize():void {
+			enqueue(function(successCallback:*, errorCallback:*):* {
+				debug('Identified customer: ', config.customer);
+                config.customer = { cookie: getCookie(true) };
+				debug('Anonymized customer: ', config.customer);
+				successCallback();
+            });
+		}
+		
         public function update(customerProperties:Object):void {
             enqueue(function(successCallback:*, errorCallback:*):* {
                 debug('Updating customer', customerProperties);
@@ -358,11 +367,12 @@
         public function track(eventType:String, eventProperties:Object = null):void {
 			if (eventProperties == null) {
 				eventProperties = {};
-			}
+			}		
+			
 			var rawTimestamp:Number = getTimestamp();
             enqueue(function(successCallback:*, errorCallback:*):* {
                 var event:* = {
-                    customer_ids: config.customer,
+                    customer_ids: extend({}, config.customer),
                     company_id: config.token,
                     type: eventType,
 					timestamp: rawTimestamp + timestampOffset,

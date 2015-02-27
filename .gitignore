@@ -1,6 +1,8 @@
 *.swf
 *~
 
+test-client
+
 # Build and Release Folders
 bin/
 bin-debug/
