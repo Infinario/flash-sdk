@@ -58,7 +58,13 @@
         }
 		
 		private function getCookie(fresh:Boolean = false):String {
-			var so:SharedObject  = SharedObject.getLocal(TRACKING_COOKIE_KEY);
+			var so:SharedObject = null;
+			try {
+				so = SharedObject.getLocal(TRACKING_COOKIE_KEY);
+			} catch (e:Error) {
+				trace('Could not load local shared object');
+				return guid();
+			}
 			if (fresh || so.size == 0 || !so.data.cookie || (typeof so.data.cookie) !== 'string' || so.data.cookie.length != 36) {
 				so.data.cookie = guid();
 				so.flush();
