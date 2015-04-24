@@ -61,15 +61,15 @@
 			var so:SharedObject = null;
 			try {
 				so = SharedObject.getLocal(TRACKING_COOKIE_KEY);
+				if (fresh || !so || so.size == 0 || !so.data.cookie || (typeof so.data.cookie) !== 'string' || so.data.cookie.length != 36) {
+					so.data.cookie = guid();
+					so.flush();
+				}
+				return so.data.cookie;
 			} catch (e:Error) {
-				trace('Could not load local shared object');
-				return guid();
+				trace('Could not get cookie');
 			}
-			if (fresh || so.size == 0 || !so.data.cookie || (typeof so.data.cookie) !== 'string' || so.data.cookie.length != 36) {
-				so.data.cookie = guid();
-				so.flush();
-			}
-			return so.data.cookie;
+			return guid();
 		}
 		
 		private function processNext():void {
